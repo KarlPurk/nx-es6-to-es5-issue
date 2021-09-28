@@ -1,4 +1,85 @@
+This repo demonstrates an issue transpiling ES6 modules to ES5 in an NX workspace.
 
+# Problem
+
+Some node module dependencies are only provided in ES6 syntax.  When supporting
+IE11 all code should be transpiled to ES5.  
+
+# Solution
+
+According to the details found [in this issue](https://github.com/nrwl/nx/issues/2209) this can be fixed by adding a custom webpack configuration and replacing
+the exclude option of the web-babel-loader.
+
+# Changes made in this repo
+
+1. Modify `apps/example/.browserslistrc` to add support for IE11
+2. Modify `apps/example/src/main.tsx` to provide a reduced test case.
+3. Install a node dependency that is ES6 only (`string-width@5.0.1`)
+4. Install `are-you-es5` to help build a regex to identify ES6 modules that need transpiling
+5. Modify `workspace.json` to use a custom `webpack.config.js` file
+6. Created custom `webpack.config.js` file and modified the webpack config to ensure
+ES6 modules are transpiled
+
+# Expected results
+
+After creating a build, the `string-width` dependency should be transpiled to ES5 in the output build.
+
+# Actual results
+
+After creating a build, the `string-width` dependency is still ES6 format in output build.
+
+Excerpt from build output:
+```
+// CONCATENATED MODULE: /Users/karl/Source/test-es6-transpile-es5-builds/node_modules/string-width/index.js
+
+
+
+function stringWidth(string) {
+  if (typeof string !== 'string' || string.length === 0) {
+    return 0;
+  }
+
+  string = stripAnsi(string);
+
+  if (string.length === 0) {
+    return 0;
+  }
+
+  string = string.replace(emoji_regex_default()(), '  ');
+  let width = 0;
+
+  for (let index = 0; index < string.length; index++) {
+    const codePoint = string.codePointAt(index); // Ignore control characters
+
+    if (codePoint <= 0x1F || codePoint >= 0x7F && codePoint <= 0x9F) {
+      continue;
+    } // Ignore combining characters
+
+
+    if (codePoint >= 0x300 && codePoint <= 0x36F) {
+      continue;
+    } // Surrogates
+
+
+    if (codePoint > 0xFFFF) {
+      index++;
+    }
+
+    width += isFullwidthCodePoint(codePoint) ? 2 : 1;
+  }
+
+  return width;
+}
+// CONCATENATED MODULE: ./main.tsx
+```
+
+# Reproduction steps
+
+1. Install dependencies with `npm i`
+2. Produce a build with `nx build example --prod`
+3. Inspect the output bundle (the `main` chunk).  There should be no ES6 code.
+
+-------
 
 # TestEs6TranspileEs5Builds
 
