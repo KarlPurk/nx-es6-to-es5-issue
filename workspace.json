@@ -21,7 +21,7 @@
             ],
             "styles": ["apps/example/src/styles.css"],
             "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack"
+            "webpackConfig": "webpack.config.js"
           },
           "configurations": {
             "production": {

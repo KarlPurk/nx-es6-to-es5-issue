@@ -1,11 +1,5 @@
-import { StrictMode } from 'react';
-import * as ReactDOM from 'react-dom';
+import stringWidth from 'string-width';
 
-import App from './app/app';
+const test = "hi"
 
-ReactDOM.render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-  document.getElementById('root')
-);
+console.log(stringWidth(test))
